@@ -5,7 +5,7 @@ Site estático hospedado no GitHub Pages para compartilhar arquivos, fotos e ví
 ## Como usar
 
 ### Visitantes
-Acesse `https://seu-usuario.github.io` e veja os arquivos disponíveis para download.
+Acesse `https://kauasantosaluno-tech.github.io` e veja os arquivos disponíveis para download.
 
 ### Admin
 1. Abra o site e clique em **Modo admin**
