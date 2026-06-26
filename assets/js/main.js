@@ -25,7 +25,8 @@ function formatDate(iso) {
 }
 
 function formatSize(bytes) {
-  if (!bytes) return '';
+  if (bytes == null) return '';
+  if (bytes === 0) return '0 B';
   if (bytes < 1024) return bytes + ' B';
   if (bytes < 1024*1024) return (bytes/1024).toFixed(1) + ' KB';
   return (bytes/(1024*1024)).toFixed(1) + ' MB';
@@ -120,7 +121,13 @@ function openModal(post) {
     body.innerHTML = `<iframe src="${path}" title="${post.title}"></iframe>`;
   } else if (cat === 'text') {
     body.innerHTML = `<div class="text-viewer" id="textContent">Carregando…</div>`;
-    fetch(path).then(r => r.text()).then(t => { $('textContent').textContent = t; });
+    fetch(path)
+      .then(r => {
+        if (!r.ok) throw new Error();
+        return r.text();
+      })
+      .then(t => { $('textContent').textContent = t; })
+      .catch(() => { $('textContent').textContent = "Erro: Não foi possível carregar o conteúdo do arquivo."; });
   } else {
     body.innerHTML = `
       <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:300px;gap:16px;color:var(--muted)">

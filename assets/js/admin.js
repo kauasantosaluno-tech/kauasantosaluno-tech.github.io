@@ -3,13 +3,14 @@ const $ = id => document.getElementById(id);
 
 function slugify(str) {
   return str.toLowerCase()
-    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .normalize('NFD').replace(/[̀-ͯ]/g, '')
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '');
 }
 
 function formatSize(bytes) {
-  if (!bytes) return '';
+  if (bytes == null) return '';
+  if (bytes === 0) return '0 B';
   if (bytes < 1024) return bytes + ' B';
   if (bytes < 1024*1024) return (bytes/1024).toFixed(1) + ' KB';
   return (bytes/(1024*1024)).toFixed(1) + ' MB';
@@ -56,7 +57,11 @@ let selectedFile = null;
 const zone = $('uploadZone');
 const input = $('fileInput');
 
-zone.addEventListener('click', () => input.click());
+zone.addEventListener('click', (e) => {
+  if (e.target !== input) {
+    input.click();
+  }
+});
 zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
 zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
 zone.addEventListener('drop', e => {
@@ -171,11 +176,16 @@ $('btnExport').addEventListener('click', () => {
   const json = JSON.stringify(posts, null, 2);
   const blob = new Blob([json], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
+  
   const a = document.createElement('a');
   a.href = url;
   a.download = 'posts.json';
+  
+  document.body.appendChild(a);
   a.click();
-  URL.revokeObjectURL(url);
+  document.body.removeChild(a);
+  
+  setTimeout(() => URL.revokeObjectURL(url), 150);
 });
 
 // ── Boot ───────────────────────────────────────────────────
