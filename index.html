@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kauã Lopes | Portfólio de Algoritmos e Programação</title>
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --card-bg: #161b22;
+            --text-main: #c9d1d9;
+            --text-muted: #8b949e;
+            --accent: #58a6ff;
+            --accent-hover: #1f6feb;
+            --terminal-green: #39ff14;
+            --border-color: #30363d;
+            --font-sans: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --font-mono: 'Fira Code', Consolas, Monaco, 'Courier New', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        section {
+            padding: 80px 0;
+        }
+
+        .navbar {
+            background-color: rgba(22, 27, 34, 0.85);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
+
+        .logo {
+            font-family: var(--font-mono);
+            color: var(--accent);
+            font-weight: bold;
+            font-size: 1.2rem;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 25px;
+        }
+
+        .nav-links a {
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+
+        .terminal-user {
+            font-family: var(--font-mono);
+            color: var(--terminal-green);
+            font-size: 0.9rem;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .hero-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+            min-height: calc(100vh - 70px);
+        }
+
+        .hero-text h1 {
+            font-size: 2.8rem;
+            line-height: 1.2;
+            margin-bottom: 15px;
+        }
+
+        .hero-text p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background-color: var(--accent);
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--card-bg);
+        }
+
+        .code-window {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .code-header {
+            background-color: #1f242c;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .red { background-color: #ff5f56; }
+        .yellow { background-color: #ffbd2e; }
+        .green { background-color: #27c93f; }
+
+        .file-name {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-left: 10px;
+        }
+
+        .code-window pre {
+            padding: 20px;
+            overflow-x: auto;
+        }
+
+        .code-window code {
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+        }
+
+        .keyword { color: #ff7b72; }
+        .class-name { color: #d2a8ff; }
+        .function { color: #d2a8ff; }
+        .variable { color: #ffa657; }
+        .string { color: #a5d6ff; }
+
+        .section-header {
+            margin-bottom: 40px;
+            text-align: left;
+        }
+
+        .section-header h2 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .section-header p {
+            color: var(--text-muted);
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+        }
+
+        .project-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 25px;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .project-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent);
+        }
+
+        .project-info h3 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: #ffffff;
+        }
+
+        .project-info p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+        }
+
+        .tags {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .tag {
+            background-color: #21262d;
+            color: var(--accent);
+            padding: 4px 10px;
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-family: var(--font-mono);
+            border: 1px solid var(--border-color);
+        }
+
+        .project-actions {
+            display: flex;
+            gap: 15px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 15px;
+        }
+
+        .btn-link {
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .btn-link:hover {
+            color: var(--accent);
+        }
+
+        .stack-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .stack-item {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 20px;
+        }
+
+        .stack-item h3 {
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            color: var(--accent);
+        }
+
+        .stack-item p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .footer {
+            border-top: 1px solid var(--border-color);
+            padding: 40px 0;
+            margin-top: 80px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        @media (max-width: 768px) {
+            .hero-section {
+                grid-template-columns: 1fr;
+                text-align: center;
+                padding-top: 40px;
+            }
+            
+            .hero-buttons {
+                justify-content: center;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .navbar-content {
+                flex-direction: column;
+                justify-content: center;
+                gap: 10px;
+                height: auto;
+                padding: 15px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="navbar">
+        <div class="container navbar-content">
+            <a href="#" class="logo">&lt;Kauã Lopes/&gt;</a>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="#sobre">Sobre</a></li>
+                    <li><a href="#projetos">Atividades</a></li>
+                    <li><a href="#stack">Arsenal Técnico</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section id="sobre" class="hero-section">
+            <div class="hero-text">
+                <span class="terminal-user">$ whoami</span>
+                <h1>Olá, eu sou o Kauã Lopes</h1>
+                <p>Estudante de Engenharia de Telecomunicações desenvolvendo soluções e lógica na disciplina de <strong>Algoritmos e Programação</strong>.</p>
+                <div class="hero-buttons">
+                    <a href="#projetos" class="btn btn-primary">Ver Atividades</a>
+                    <a href="#stack" class="btn btn-secondary">Tecnologias</a>
+                </div>
+            </div>
+            
+            <div class="code-window">
+                <div class="code-header">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                    <span class="file-name">sobre_mim.py</span>
+                </div>
+                <pre><code><span class="keyword">class</span> <span class="class-name">Estudante</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        self.nome = <span class="string">"Kauã Lopes"</span>
+        self.foco = <span class="string">"Programação & Telecom"</span>
+        self.status = <span class="string">"Construindo soluções"</span>
+        self.cafe = <span class="keyword">True</span></code></pre>
+            </div>
+        </section>
+
+        <section id="projetos" class="section">
+            <div class="section-header">
+                <span class="terminal-user">$ ls ./projetos</span>
+                <h2>Projetos & Atividades</h2>
+                <p>Trabalhos práticos desenvolvidos ao longo do semestre acadêmico.</p>
+            </div>
+
+            <div class="projects-grid">
+                <article class="project-card">
+                    <div class="project-info">
+                        <h3>Atividade Prática 01</h3>
+                        <p>Implementação de lógica condicional e estruturas de repetição básicas em Python.</p>
+                        <div class="tags">
+                            <span class="tag">Python</span>
+                            <span class="tag">Lógica</span>
+                        </div>
+                    </div>
+                    <div class="project-actions">
+                        <a href="#" class="btn-link" target="_blank">📄 Ver PDF</a>
+                        <a href="#" class="btn-link" target="_blank">🐍 Código Fonte</a>
+                    </div>
+                </article>
+
+                <article class="project-card">
+                    <div class="project-info">
+                        <h3>Sistema Orientado a Objetos</h3>
+                        <p>Modelagem de um sistema de telecomunicações utilizando conceitos de Classes, Métodos e Herança.</p>
+                        <div class="tags">
+                            <span class="tag">Python</span>
+                            <span class="tag">OOP</span>
+                        </div>
+                    </div>
+                    <div class="project-actions">
+                        <a href="#" class="btn-link" target="_blank">📄 Ver PDF</a>
+                        <a href="#" class="btn-link" target="_blank">🐍 Código Fonte</a>
+                    </div>
+                </article>
+
+                <article class="project-card">
+                    <div class="project-info">
+                        <h3>Automação de Scripts</h3>
+                        <p>Desenvolvimento de scripts para resolução de problemas matemáticos e manipulação de arquivos.</p>
+                        <div class="tags">
+                            <span class="tag">Automação</span>
+                            <span class="tag">Scripts</span>
+                        </div>
+                    </div>
+                    <div class="project-actions">
+                        <a href="#" class="btn-link" target="_blank">📄 Ver PDF</a>
+                        <a href="#" class="btn-link" target="_blank">🐍 Código Fonte</a>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section id="stack" class="section">
+            <div class="section-header">
+                <span class="terminal-user">$ pip list && cat requirements.txt</span>
+                <h2>Arsenal Técnico</h2>
+                <p>Tecnologias, linguagens e ferramentas utilizadas nos projetos.</p>
+            </div>
+
+            <div class="stack-grid">
+                <div class="stack-item">
+                    <h3>Python</h3>
+                    <p>Linguagem principal usada na construção da lógica e algoritmos.</p>
+                </div>
+                <div class="stack-item">
+                    <h3>Claude & ChatGPT</h3>
+                    <p>IAs utilizadas como parceiras de pareamento para debug e conceitos.</p>
+                </div>
+                <div class="stack-item">
+                    <h3>Git & GitHub</h3>
+                    <p>Controle de versão do código e hospedagem das atividades no GitHub Pages.</p>
+                </div>
+                <div class="stack-item">
+                    <h3>VS Code</h3>
+                    <p>Ambiente de desenvolvimento integrado (IDE) principal.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-content">
+            <p>01001000 01101001 — Desenvolvido com foco e simplicidade</p>
+            <p>&copy; 2026 Kauã Lopes. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+</body>
+</html>
