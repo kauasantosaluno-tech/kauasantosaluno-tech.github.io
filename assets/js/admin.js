@@ -51,10 +51,16 @@ function clearAuth() {
 
 // ── GitHub API ────────────────────────────────────────────
 async function ghGet(path) {
-  const r = await fetch(`https://api.github.com/repos/${REPO}/${path}`, {
+  const url = path === '__repo__'
+    ? `https://api.github.com/repos/${REPO}`
+    : `https://api.github.com/repos/${REPO}/contents/${path}`;
+  const r = await fetch(url, {
     headers: { Authorization: `token ${TOKEN}`, Accept: 'application/vnd.github.v3+json' }
   });
-  if (!r.ok) throw new Error(`GitHub ${r.status}: ${r.statusText}`);
+  if (!r.ok) {
+    const body = await r.json().catch(() => ({}));
+    throw new Error(body.message || `HTTP ${r.status}`);
+  }
   return r.json();
 }
 
@@ -95,7 +101,12 @@ async function ghDelete(path, sha, message) {
 // Get SHA of an existing file (returns null if not found)
 async function getFileSHA(path) {
   try {
-    const data = await ghGet(`contents/${path}`);
+    const url = `https://api.github.com/repos/${REPO}/contents/${path}`;
+    const r = await fetch(url, {
+      headers: { Authorization: `token ${TOKEN}`, Accept: 'application/vnd.github.v3+json' }
+    });
+    if (!r.ok) return null;
+    const data = await r.json();
     return data.sha;
   } catch {
     return null;
@@ -105,7 +116,12 @@ async function getFileSHA(path) {
 // Read posts.json from GitHub
 async function fetchPosts() {
   try {
-    const data = await ghGet('contents/posts.json');
+    const url = `https://api.github.com/repos/${REPO}/contents/posts.json`;
+    const r = await fetch(url, {
+      headers: { Authorization: `token ${TOKEN}`, Accept: 'application/vnd.github.v3+json' }
+    });
+    if (!r.ok) return [];
+    const data = await r.json();
     const json = atob(data.content.replace(/\n/g, ''));
     return JSON.parse(json);
   } catch {
@@ -175,11 +191,21 @@ $('btnAuth').addEventListener('click', async () => {
   try {
     TOKEN = token;
     REPO  = repo;
-    await ghGet(''); // test auth
+    await ghGet('__repo__'); // testa acesso ao repositório
     saveAuth(token, repo);
     showAdminPanel();
-  } catch {
-    err.innerHTML = '<div class="notice error">Token inválido ou repositório não encontrado. Verifique e tente novamente.</div>';
+  } catch(e) {
+    let msg = 'Não foi possível conectar. Verifique:';
+    if (e.message.includes('Not Found') || e.message.includes('404')) {
+      msg = `Repositório <strong>${repo}</strong> não encontrado. Verifique o nome (formato: usuario/repositorio).`;
+    } else if (e.message.includes('Bad credentials') || e.message.includes('401')) {
+      msg = 'Token inválido ou expirado. Gere um novo em github.com/settings/tokens com a permissão <code>repo</code>.';
+    } else if (e.message.includes('403')) {
+      msg = 'Token sem permissão suficiente. Certifique-se de marcar <code>repo</code> (não só <code>public_repo</code>).';
+    } else {
+      msg = `Erro: ${e.message}`;
+    }
+    err.innerHTML = `<div class="notice error">${msg}</div>`;
     TOKEN = REPO = '';
   } finally {
     $('btnAuth').disabled = false;
