@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — Acervo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="../index.html" class="logo">
+        <span class="logo-icon">◈</span>
+        Acervo
+      </a>
+      <nav>
+        <a href="../index.html" class="nav-back">← Ver site</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Auth gate -->
+  <div id="authGate" class="auth-gate">
+    <div class="auth-card">
+      <div class="auth-icon">🔑</div>
+      <h2>Acesso ao painel</h2>
+      <p>Insira seu GitHub Personal Access Token (PAT) para gerenciar publicações.</p>
+      <div class="form-group" style="margin-top:24px">
+        <label for="tokenInput">GitHub Token</label>
+        <input type="password" class="form-control" id="tokenInput"
+               placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off" />
+        <span class="field-hint">Token com permissão <code>repo</code> (Contents API)</span>
+      </div>
+      <div class="form-group">
+        <label for="repoInput">Repositório</label>
+        <input type="text" class="form-control" id="repoInput"
+               placeholder="usuario/repositorio" />
+        <span class="field-hint">Ex: kauasantosaluno-tech/kauasantosaluno-tech.github.io</span>
+      </div>
+      <button class="btn-primary" id="btnAuth" style="width:100%;margin-top:8px">Entrar</button>
+      <div id="authError"></div>
+      <p class="auth-note">O token fica salvo apenas no seu navegador (localStorage).</p>
+    </div>
+  </div>
+
+  <!-- Main admin (hidden until auth) -->
+  <main class="container" id="adminPanel" style="display:none">
+
+    <section class="hero">
+      <div class="hero-label">Painel de gerenciamento</div>
+      <h1>Publicações</h1>
+      <p class="hero-sub">Upload direto para o GitHub — sem precisar sair desta página.</p>
+    </section>
+
+    <!-- Upload section -->
+    <div class="admin-section">
+      <div class="section-head">
+        <h2>Nova publicação</h2>
+        <button class="btn-logout" id="btnLogout">Sair</button>
+      </div>
+
+      <!-- Drop zone -->
+      <div class="upload-zone" id="uploadZone">
+        <div class="upload-zone-inner">
+          <div class="upload-icon">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+            </svg>
+          </div>
+          <p class="upload-text">Arraste arquivos aqui ou <span class="upload-link">clique para selecionar</span></p>
+          <p class="upload-hint">PDF, DOCX, XLSX, PPTX, TXT, PNG, JPG e outros</p>
+        </div>
+        <input type="file" id="fileInput" style="display:none" multiple />
+      </div>
+
+      <!-- Selected files preview -->
+      <div id="selectedFiles" class="selected-files" style="display:none"></div>
+
+      <!-- Metadata form -->
+      <div class="upload-form" id="uploadForm" style="display:none">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="postTitle">Título do trabalho</label>
+            <input type="text" class="form-control" id="postTitle"
+                   placeholder="Ex: Relatório de Estágio — 2024" />
+          </div>
+          <div class="form-group">
+            <label for="postFolder">Pasta / Projeto</label>
+            <div class="folder-input-wrap">
+              <input type="text" class="form-control" id="postFolder"
+                     placeholder="Ex: Estagio-2024 (sem espaços)" list="folderSuggestions"/>
+              <datalist id="folderSuggestions"></datalist>
+            </div>
+            <span class="field-hint">Deixe em branco para usar o título como nome da pasta.</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="postDesc">Descrição <span class="optional">(opcional)</span></label>
+          <input type="text" class="form-control" id="postDesc"
+                 placeholder="Breve descrição do conteúdo…" />
+        </div>
+
+        <button class="btn-primary btn-upload" id="btnUpload">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+          </svg>
+          Publicar no GitHub
+        </button>
+
+        <div id="uploadStatus"></div>
+      </div>
+    </div>
+
+    <!-- Existing publications -->
+    <div class="admin-section">
+      <h2>Publicações existentes</h2>
+      <div id="postList">
+        <div class="loading-state">Carregando publicações…</div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="site-footer">
+    <p>Acervo · <span id="footerYear"></span></p>
+  </footer>
+
+  <script src="../assets/js/admin.js"></script>
+</body>
+</html>

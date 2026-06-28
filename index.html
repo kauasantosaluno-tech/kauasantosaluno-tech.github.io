@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Acervo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="logo">
+        <span class="logo-icon">◈</span>
+        Acervo
+      </a>
+      <nav>
+        <a href="admin/index.html" class="nav-admin">Painel Admin →</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <div class="hero-label">Repositório de trabalhos</div>
+      <h1>Publicações</h1>
+      <p class="hero-sub">Documentos, imagens e arquivos organizados por projeto.</p>
+    </section>
+
+    <!-- View toggle -->
+    <div class="toolbar">
+      <div class="filter-bar" id="filterBar">
+        <button class="filter-btn active" data-filter="all">Todos</button>
+      </div>
+      <div class="view-toggle">
+        <button class="view-btn active" data-view="grid" title="Grade">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+            <rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/>
+            <rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/>
+          </svg>
+        </button>
+        <button class="view-btn" data-view="list" title="Lista">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+            <rect x="1" y="2" width="14" height="2" rx="1"/><rect x="1" y="7" width="14" height="2" rx="1"/>
+            <rect x="1" y="12" width="14" height="2" rx="1"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Folders / Projects -->
+    <div id="foldersView"></div>
+
+    <p class="empty-state" id="emptyState" style="display:none">
+      Nenhuma publicação ainda.<br>
+      <a href="admin/index.html">Adicionar no painel admin →</a>
+    </p>
+  </main>
+
+  <!-- Preview Modal -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal" id="modal">
+      <div class="modal-topbar">
+        <span class="modal-title-text" id="modalTitleText"></span>
+        <button class="modal-close" id="modalClose">✕</button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+      <div class="modal-footer" id="modalFooter"></div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <p>Acervo · <span id="footerYear"></span></p>
+  </footer>
+
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
