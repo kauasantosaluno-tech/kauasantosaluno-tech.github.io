@@ -118,45 +118,90 @@ function render() {
       openModal(allPosts.find(p => p.slug === slug));
     });
   });
+
+  // Popover: flip to left when near right edge, load text lazily
+  container.querySelectorAll('.post-card').forEach(card => {
+    card.addEventListener('mouseenter', () => {
+      const pop = card.querySelector('.card-preview-pop');
+      if (!pop) return;
+
+      // Flip check
+      const rect = card.getBoundingClientRect();
+      const spaceRight = window.innerWidth - rect.right;
+      if (spaceRight < 320) {
+        pop.classList.add('flip-left');
+      } else {
+        pop.classList.remove('flip-left');
+      }
+
+      // Lazy load text previews
+      const pre = pop.querySelector('pre[data-src]');
+      if (pre && pre.textContent === 'Carregando…') {
+        fetch(pre.dataset.src)
+          .then(r => r.text())
+          .then(t => { pre.textContent = t.slice(0, 1200); })
+          .catch(() => { pre.textContent = '(erro ao carregar)'; });
+      }
+    });
+  });
 }
 
 function folderGroupHTML(folder, posts) {
-  const itemsHTML = currentView === 'grid'
-    ? `<div class="posts-grid">${posts.map(cardHTML).join('')}</div>`
-    : `<div class="posts-list">${posts.map(listItemHTML).join('')}</div>`;
+  if (currentView === 'list') {
+    return `
+    <div class="folder-group" style="grid-column: 1 / -1">
+      <div class="folder-header">
+        <div class="folder-icon">📁</div>
+        <span class="folder-name">${folder.replace(/-/g, ' ')}</span>
+        <span class="folder-count">${posts.length} arquivo${posts.length !== 1 ? 's' : ''}</span>
+      </div>
+      <div style="padding:8px">
+        <div class="posts-list">${posts.map(listItemHTML).join('')}</div>
+      </div>
+    </div>`;
+  }
 
   return `
   <div class="folder-group">
     <div class="folder-header">
       <div class="folder-icon">📁</div>
       <span class="folder-name">${folder.replace(/-/g, ' ')}</span>
-      <span class="folder-count">${posts.length} arquivo${posts.length !== 1 ? 's' : ''}</span>
+      <span class="folder-count">${posts.length}</span>
     </div>
-    ${itemsHTML}
+    <div class="posts-grid">${posts.map(cardHTML).join('')}</div>
   </div>`;
 }
 
 function cardHTML(post) {
   const cat = fileCategory(post.ext);
   const path = buildPath(post);
-  let thumb;
 
+  // Thumbnail inside card
+  let thumb;
   if (cat === 'image') {
     thumb = `<img src="${path}" alt="${post.title}" loading="lazy" />`;
-  } else if (cat === 'pdf') {
-    thumb = `
-      <div class="file-icon-wrap">
-        <span class="file-icon-big">${fileEmoji(post.ext)}</span>
-        <span class="ext-chip">${post.ext}</span>
-      </div>
-      <div class="pdf-hover-preview">
-        <iframe src="${path}#page=1&toolbar=0&navpanes=0" loading="lazy"></iframe>
-      </div>`;
   } else {
     thumb = `
       <div class="file-icon-wrap">
         <span class="file-icon-big">${fileEmoji(post.ext)}</span>
         <span class="ext-chip">${post.ext}</span>
+      </div>`;
+  }
+
+  // Popover preview content
+  let popContent;
+  if (cat === 'pdf') {
+    popContent = `<iframe src="${path}#toolbar=0&navpanes=0&scrollbar=0&view=FitH" loading="lazy"></iframe>`;
+  } else if (cat === 'image') {
+    popContent = `<img src="${path}" alt="${post.title}" loading="lazy" />`;
+  } else if (cat === 'text') {
+    popContent = `<pre data-src="${path}">Carregando…</pre>`;
+  } else {
+    popContent = `
+      <div class="pop-no-preview">
+        <span>${fileEmoji(post.ext)}</span>
+        <span>.${post.ext.toUpperCase()}</span>
+        <span style="font-size:11px">Clique para abrir</span>
       </div>`;
   }
 
@@ -169,6 +214,13 @@ function cardHTML(post) {
         <span>${formatDate(post.date)}</span>
         ${post.size ? `<span>${formatSize(post.size)}</span>` : ''}
       </div>
+    </div>
+    <div class="card-preview-pop">
+      <div class="pop-header">
+        <span>${fileEmoji(post.ext)}</span>
+        <span>${post.title}</span>
+      </div>
+      <div class="pop-body">${popContent}</div>
     </div>
   </div>`;
 }
